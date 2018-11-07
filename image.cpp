@@ -30,3 +30,17 @@ double NCC(const Image<float>& I1,Point m1,const Image<float>& I2,Point m2,int n
 	return corr(I1,m1,I2,m2,n)/sqrt(c1*c2);
 }
 
+void Saturation(const Mat& Ic, Mat& L){
+	Mat I;
+	cvtColor(Ic, I, CV_BGR2HSV);
+	Mat Res(m, n, CV_32F)
+	int m = I.rows;
+	int n = I.cols;
+	for(int i=0;i<m;i++){
+		for(int j=0;j<n;j++){
+			Res.at<float>(i,j) = I.at<vec3b>(i,j)[1];
+		}
+	}
+	return Res;
+}
+
