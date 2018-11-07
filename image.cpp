@@ -30,6 +30,8 @@ double NCC(const Image<float>& I1,Point m1,const Image<float>& I2,Point m2,int n
 	return corr(I1,m1,I2,m2,n)/sqrt(c1*c2);
 }
 
+//Saturation
+
 void Saturation(const Mat& Ic, Mat& L){
 	Mat I;
 	cvtColor(Ic, I, CV_BGR2HSV);
@@ -42,5 +44,28 @@ void Saturation(const Mat& Ic, Mat& L){
 		}
 	}
 	return Res;
-}
+//Laplacian
+void Laplacian(const Mat&Ic, Mat& L) { 
+	// Ic is not a necessarly grayscale version of the picture
+	Mat I;
+	cvtColor(Ic, I, CV_BGR2GRAY);
+	int m = I.rows, n = I.cols;
+	L = Mat(m, n, CV_32F);
+	for (int i = 0; i < m; i++) {
+		for (int j = 0; j < n; j++) {
+			if (i == 0 || i == m - 1 || j == 0 || j == n - 1) {
+				L.at<float>(i, j) = 0;
+			}
+			else {
+				float value = 0;
+				for (int ivar = -1; ivar < 2; ivar++) {
+					for (int jvar = -1; jvar < 2; jvar++) {
+						value += I.at<float>(i + ivar, j + jvar) - I.at<float>(i, j);
+					}
+				}
+				L.at<float>(i, j) = value;
+				
+			}
+		}
+	}
 
