@@ -35,15 +35,17 @@ double NCC(const Image<float>& I1,Point m1,const Image<float>& I2,Point m2,int n
 void Saturation(const Mat& Ic, Mat& L){
 	Mat I;
 	cvtColor(Ic, I, CV_BGR2HSV);
-	Mat Res(m, n, CV_32F)
 	int m = I.rows;
 	int n = I.cols;
+	L = Mat(m, n, CV_32F);
+
 	for(int i=0;i<m;i++){
 		for(int j=0;j<n;j++){
-			Res.at<float>(i,j) = I.at<vec3b>(i,j)[1];
+			L.at<int>(i,j) = (int)I.at<Vec3b>(i,j)[1];
 		}
 	}
-	return Res;
+}
+
 //Laplacian
 void Laplacian(const Mat&Ic, Mat& L) { 
 	// Ic is not a necessarly grayscale version of the picture
@@ -63,9 +65,11 @@ void Laplacian(const Mat&Ic, Mat& L) {
 						value += I.at<float>(i + ivar, j + jvar) - I.at<float>(i, j);
 					}
 				}
-				L.at<float>(i, j) = value;
+				L.at<char>(i, j) = value;
 				
 			}
 		}
 	}
+
+}
 
