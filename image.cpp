@@ -1,5 +1,6 @@
 #include "image.h"
 #include <iostream>
+#include <cmath>
 // Correlation
 double mean(const Image<float>& I,Point m,int n) {
 	double s=0;
@@ -66,7 +67,7 @@ void Laplacian(const Mat&Ic, Mat& L) {
 						value += F.at<float>(i + ivar, j + jvar) - F.at<float>(i, j);
 					}
 				}
-				L.at<float>(i, j) = value;
+				L.at<float>(i, j) = abs(value);
 				
 			}
 		}
@@ -74,3 +75,21 @@ void Laplacian(const Mat&Ic, Mat& L) {
 
 }
 
+
+// Well-exposedness
+
+void WellExposedness(const Mat&Ic, Mat& E){
+	float sigma = 0.2;
+	Mat I, F;
+	cvtColor(Ic, I, CV_BGR2GRAY);
+	I.convertTo(F, CV_32F);
+	int m = I.rows, n = I.cols;
+	E = Mat(m, n, CV_32F);
+	for(int i = 0;i < m; i++){
+		for(int j=0;j<n;j++){
+			E.at<float>(i,j) = exp(-(F.at<float>(i,j)/255 - 0.5)*(F.at<float>(i,j)/255 - 0.5)/(2*sigma*sigma));
+		}
+	}
+
+
+}
