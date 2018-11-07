@@ -5,9 +5,14 @@
 
 int main(int argc, char** argv){
 	Mat I = imread("../road.jpg");
-	cout << I.at<Vec3b>(2,2);
+	Mat Ig;
 	Mat Ihsv;
 	cvtColor(I, Ihsv, CV_BGR2HSV);
-	cout << Ihsv.at<Vec3b>(2, 2);
+	cvtColor(I, Ig, CV_BGR2GRAY);
+	Mat S, L;
+	Laplacian(I,L);
+	Saturation(I, S);
+	cout << L.at<float>(2, 2)<<endl;
+	cout << S.at<float>(2, 2) << endl;
     return 0;
 }

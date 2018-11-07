@@ -1,5 +1,5 @@
 #include "image.h"
-
+#include <iostream>
 // Correlation
 double mean(const Image<float>& I,Point m,int n) {
 	double s=0;
@@ -32,16 +32,16 @@ double NCC(const Image<float>& I1,Point m1,const Image<float>& I2,Point m2,int n
 
 //Saturation
 
-void Saturation(const Mat& Ic, Mat& L){
+void Saturation(const Mat& Ic, Mat& S){
 	Mat I;
 	cvtColor(Ic, I, CV_BGR2HSV);
 	int m = I.rows;
 	int n = I.cols;
-	L = Mat(m, n, CV_32F);
+	S = Mat(m, n, CV_32F);
 
 	for(int i=0;i<m;i++){
 		for(int j=0;j<n;j++){
-			L.at<int>(i,j) = (int)I.at<Vec3b>(i,j)[1];
+			S.at<float>(i,j) = (float)I.at<Vec3b>(i,j)[1];
 		}
 	}
 }
@@ -49,8 +49,9 @@ void Saturation(const Mat& Ic, Mat& L){
 //Laplacian
 void Laplacian(const Mat&Ic, Mat& L) { 
 	// Ic is not a necessarly grayscale version of the picture
-	Mat I;
+	Mat I, F;
 	cvtColor(Ic, I, CV_BGR2GRAY);
+	I.convertTo(F, CV_32F);
 	int m = I.rows, n = I.cols;
 	L = Mat(m, n, CV_32F);
 	for (int i = 0; i < m; i++) {
@@ -62,10 +63,10 @@ void Laplacian(const Mat&Ic, Mat& L) {
 				float value = 0;
 				for (int ivar = -1; ivar < 2; ivar++) {
 					for (int jvar = -1; jvar < 2; jvar++) {
-						value += I.at<float>(i + ivar, j + jvar) - I.at<float>(i, j);
+						value += F.at<float>(i + ivar, j + jvar) - F.at<float>(i, j);
 					}
 				}
-				L.at<char>(i, j) = value;
+				L.at<float>(i, j) = value;
 				
 			}
 		}

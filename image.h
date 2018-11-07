@@ -57,5 +57,5 @@ double NCC(const Image<float>& I1,Point m1,const Image<float>& I2,Point m2,int n
 
 // Laplacian
 void Laplacian(const Mat&Ic, Mat& G2);
-
+void Saturation(const Mat& Ic, Mat& S);
 
