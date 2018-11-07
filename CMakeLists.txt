@@ -4,5 +4,5 @@ FIND_PACKAGE(OpenCV REQUIRED)
 
 PROJECT(exposurefusion)
 
-ADD_EXECUTABLE(exposurefusion image.cpp image.h)
+ADD_EXECUTABLE(exposurefusion exposurefusion.cpp image.cpp image.h)
 TARGET_LINK_LIBRARIES(exposurefusion ${OpenCV_LIBS})
