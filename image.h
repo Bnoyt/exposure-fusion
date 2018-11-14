@@ -60,4 +60,4 @@ double NCC(const Image<float>& I1,Point m1,const Image<float>& I2,Point m2,int n
 void Saturation(const Mat& Ic, Mat& S);
 void WellExposedness(const Mat&Ic, Mat& E);
 void reduceImage(const Mat& I1, Mat& I2);
-
+void calcul_mat(vector<Mat> v,Mat &Ires);
