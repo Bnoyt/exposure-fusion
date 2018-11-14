@@ -48,6 +48,8 @@ void Saturation(const Mat& Ic, Mat& S){
 }
 
 //Laplacian
+
+/*
 void Laplacian(const Mat&F, Mat& L) { 
 	// F is a CV_32F grayscale image
 	int m = F.rows, n = F.cols;
@@ -63,7 +65,7 @@ void Laplacian(const Mat&F, Mat& L) {
 		}
 	}
 }
-
+*/
 
 // Well-exposedness
 
@@ -80,4 +82,39 @@ void WellExposedness(const Mat&Ic, Mat& E){
 		}
 	}
 
+}
+
+double a = .4;
+double b = .25;
+double c = .25 - a / 2;
+
+double w(int n) {
+	if (n == 0) return a;
+	if (n == 1 || n==-1) return b;
+	return c;
+}
+double w(int n, int m) {
+	return w(n)*w(m);
+}
+
+void reduceImage(const Mat& F, Mat& F2) {
+	int m = F.rows / 2;
+	int n = F.cols / 2;
+	F2 = Mat(m, n, CV_8U);
+	for (int i = 0; i < m; i++) {
+		for (int j = 0; j < n; j++) {
+			if (i < 2 || i>m-2 || j < 2 || j > n - 2) {
+				F2.at<uchar>(i, j) = 0;
+			}
+			else {
+				double value = 0.;
+				for (int m = -2; m <= 2; m++){
+					for (int n = -2; n <= 2; n++) {
+						value += w(n, m) * (int) F.at<uchar>(2 * i + m, 2 * j + n);
+						F2.at<uchar>(i, j) = (char)value;
+					}
+				}
+			}
+		}
+	}
 }
