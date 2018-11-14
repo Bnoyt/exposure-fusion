@@ -81,3 +81,59 @@ void WellExposedness(const Mat&Ic, Mat& E){
 	}
 
 }
+
+
+
+void calcul_mat(vector<Mat> v,Mat &Ires){
+	vector<Mat> S, L, E, Pond;
+	int m = v.at(0).rows, n = v.at(0).cols;
+	for (vector<Mat>::iterator it = v.begin() ; it != v.end(); ++it){
+		Mat s,l,e,p;
+		Laplacian(*it,l);
+		Saturation(*it,l);
+		WellExposedness(*it,e);
+
+		S.push_back(s);
+		E.push_back(e);
+		L.push_back(l);
+
+		p = Mat(m, n, CV_32F);
+
+		for (int i = 0; i < m; i++) {
+			for (int j = 0; j < n; j++) {
+
+				p.at<float>(i,j) = pow(s.at<float>(i,j),alphaS) * pow(e.at<float>(i,j),alphaE) * pow(l.at<float>(i,j),alphaL)  ;
+
+			}
+		}
+		
+
+	}
+	Ires = v.at(0);
+
+	for (int i = 0; i < m; i++) {
+		for (int j = 0; j < n; j++) {
+
+			int pondsum = 0.;
+
+			Ires.at<Vec3b>(i, j)[0] = 0.;
+			Ires.at<Vec3b>(i, j)[1] = 0.;
+			Ires.at<Vec3b>(i, j)[2] = 0.;
+
+			for (int k = 0;k<v.size();k++){
+				
+			}
+
+			for (vector<Mat>::iterator it = v.begin() ; it != v.end(); ++it){
+
+				Ires.at<Vec3b>(i, j)[0] = Ires.at<Vec3b>(i, j)[0] + it->at<Vec3b>(i, j)[0]/pondsum;
+				Ires.at<Vec3b>(i, j)[1] = Ires.at<Vec3b>(i, j)[1] + it->at<Vec3b>(i, j)[1]/pondsum;
+				Ires.at<Vec3b>(i, j)[2] = Ires.at<Vec3b>(i, j)[2] + it->at<Vec3b>(i, j)[2]/pondsum;
+			}
+
+		}
+	}
+	
+
+
+}

@@ -59,4 +59,4 @@ double NCC(const Image<float>& I1,Point m1,const Image<float>& I2,Point m2,int n
 void Laplacian(const Mat&Ic, Mat& G2);
 void Saturation(const Mat& Ic, Mat& S);
 void WellExposedness(const Mat&Ic, Mat& E);
-
+void calcul_mat(vector<Mat> v,Mat &Ires);
