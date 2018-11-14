@@ -47,12 +47,9 @@ void Saturation(const Mat& Ic, Mat& S){
 }
 
 //Laplacian
-void Laplacian(const Mat&Ic, Mat& L) { 
-	// Ic is not a necessarly grayscale version of the picture
-	Mat I, F;
-	cvtColor(Ic, I, CV_BGR2GRAY);
-	I.convertTo(F, CV_32F);
-	int m = I.rows, n = I.cols;
+void Laplacian(const Mat&F, Mat& L) { 
+	// F is a CV_32F grayscale image
+	int m = F.rows, n = F.cols;
 	L = Mat(m, n, CV_32F);
 	for (int i = 0; i < m; i++) {
 		for (int j = 0; j < n; j++) {
@@ -60,17 +57,9 @@ void Laplacian(const Mat&Ic, Mat& L) {
 				L.at<float>(i, j) = 0;
 			}
 			else {
-				float value = 0;
-				for (int ivar = -1; ivar < 2; ivar++) {
-					for (int jvar = -1; jvar < 2; jvar++) {
-						value += F.at<float>(i + ivar, j + jvar) - F.at<float>(i, j);
-					}
-				}
-				L.at<float>(i, j) = value;
-				
+				L.at<float>(i, j) = abs(F.at<float>(i-1, j)+ F.at<float>(i+1, j)+ F.at<float>(i, j-1)+ F.at<float>(i, j+1) -4*F.at<float>(i, j));
 			}
 		}
 	}
-
 }
 
