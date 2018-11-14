@@ -1,7 +1,16 @@
 #include "image.h"
 #include <iostream>
 #include <cmath>
+#include <opencv2/highgui/highgui.hpp>
 // Correlation
+using namespace cv;
+
+
+const double alphaE = 0.5;
+const double alphaL = 0.5;
+const double alphaS = 0.5;
+
+
 double mean(const Image<float>& I,Point m,int n) {
 	double s=0;
 	for (int j=-n;j<=n;j++)
@@ -90,7 +99,7 @@ void calcul_mat(vector<Mat> v,Mat &Ires){
 	for (vector<Mat>::iterator it = v.begin() ; it != v.end(); ++it){
 		Mat s,l,e,p;
 		Laplacian(*it,l);
-		Saturation(*it,l);
+		Saturation(*it,s);
 		WellExposedness(*it,e);
 
 		S.push_back(s);
@@ -99,40 +108,56 @@ void calcul_mat(vector<Mat> v,Mat &Ires){
 
 		p = Mat(m, n, CV_32F);
 
+
 		for (int i = 0; i < m; i++) {
 			for (int j = 0; j < n; j++) {
-
-				p.at<float>(i,j) = pow(s.at<float>(i,j),alphaS) * pow(e.at<float>(i,j),alphaE) * pow(l.at<float>(i,j),alphaL)  ;
+				if (abs(l.at<float>(i,j)) == numeric_limits<float>::infinity()) l.at<float>(i,j) = 1000000000000000;
+				p.at<float>(i,j) = pow(e.at<float>(i,j),alphaE) + pow(s.at<float>(i,j),alphaS) + 0.1*log(pow(l.at<float>(i,j),alphaL))  ;
+				cout << log(pow(l.at<float>(i,j),alphaL)) << endl;
+				if (log(pow(l.at<float>(i,j),alphaL)) > 100.) cout << pow(l.at<float>(i,j),alphaL) << endl;
 
 			}
 		}
-		
+		Pond.push_back(p);
+
 
 	}
-	Ires = v.at(0);
+
+	Mat kaz = imread("../grandcanal_under.jpg");
+
+	Ires = kaz;
 
 	for (int i = 0; i < m; i++) {
 		for (int j = 0; j < n; j++) {
 
-			int pondsum = 0.;
+			double pondsum = 0;
 
 			Ires.at<Vec3b>(i, j)[0] = 0.;
 			Ires.at<Vec3b>(i, j)[1] = 0.;
 			Ires.at<Vec3b>(i, j)[2] = 0.;
 
 			for (int k = 0;k<v.size();k++){
-				
+				pondsum = pondsum + Pond.at(k).at<float>(i,j);
 			}
 
-			for (vector<Mat>::iterator it = v.begin() ; it != v.end(); ++it){
-
-				Ires.at<Vec3b>(i, j)[0] = Ires.at<Vec3b>(i, j)[0] + it->at<Vec3b>(i, j)[0]/pondsum;
-				Ires.at<Vec3b>(i, j)[1] = Ires.at<Vec3b>(i, j)[1] + it->at<Vec3b>(i, j)[1]/pondsum;
-				Ires.at<Vec3b>(i, j)[2] = Ires.at<Vec3b>(i, j)[2] + it->at<Vec3b>(i, j)[2]/pondsum;
+			for (int k = 0;k<v.size();k++){
+				pondsum = pondsum + Pond.at(k).at<float>(i,j);
+				Ires.at<Vec3b>(i, j)[0] = Ires.at<Vec3b>(i, j)[0] + Pond.at(k).at<float>(i,j) * (double) v.at(k).at<Vec3b>(i, j)[0] / pondsum;
+				Ires.at<Vec3b>(i, j)[1] = Ires.at<Vec3b>(i, j)[1] + Pond.at(k).at<float>(i,j) * (double) v.at(k).at<Vec3b>(i, j)[1] / pondsum;
+				Ires.at<Vec3b>(i, j)[2] = Ires.at<Vec3b>(i, j)[2] + Pond.at(k).at<float>(i,j) * (double) v.at(k).at<Vec3b>(i, j)[2] / pondsum;
 			}
+			
+
+			Ires.at<Vec3b>(i, j)[0] = Ires.at<Vec3b>(i, j)[0]*2;
+			Ires.at<Vec3b>(i, j)[1] = Ires.at<Vec3b>(i, j)[1]*2;
+			Ires.at<Vec3b>(i, j)[2] = Ires.at<Vec3b>(i, j)[2]*2;
 
 		}
 	}
+	cout << v.at(0).at<Vec3b>(0,0) << endl;
+	cout << v.at(1).at<Vec3b>(0,0) << endl;
+	cout << v.at(2).at<Vec3b>(0,0) << endl;
+	cout << Ires.at<Vec3b>(0,0) << endl;
 	
 
 
