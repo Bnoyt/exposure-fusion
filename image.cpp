@@ -47,26 +47,6 @@ void Saturation(const Mat& Ic, Mat& S){
 	}
 }
 
-//Laplacian
-
-/*
-void Laplacian(const Mat&F, Mat& L) { 
-	// F is a CV_32F grayscale image
-	int m = F.rows, n = F.cols;
-	L = Mat(m, n, CV_32F);
-	for (int i = 0; i < m; i++) {
-		for (int j = 0; j < n; j++) {
-			if (i == 0 || i == m - 1 || j == 0 || j == n - 1) {
-				L.at<float>(i, j) = 0;
-			}
-			else {
-				L.at<float>(i, j) = abs(F.at<float>(i-1, j)+ F.at<float>(i+1, j)+ F.at<float>(i, j-1)+ F.at<float>(i, j+1) -4*F.at<float>(i, j));
-			}
-		}
-	}
-}
-*/
-
 // Well-exposedness
 
 void WellExposedness(const Mat&Ic, Mat& E){
@@ -84,9 +64,9 @@ void WellExposedness(const Mat&Ic, Mat& E){
 
 }
 
-double a = .4;
-double b = .25;
-double c = .25 - a / 2;
+const double a = .4;
+const double b = .25;
+const double c = .25 - a / 2;
 
 double w(int n) {
 	if (n == 0) return a;
@@ -119,9 +99,9 @@ void reduceImage(const Mat& F, Mat& F2) {
 	}
 }
 
-double alphaS = 1.;
-double alphaE = 1.;
-double alphaL = 1.;
+const double alphaS = 1.;
+const double alphaE = 1.;
+const double alphaL = 1.;
 
 void calcul_mat(vector<Mat> v,Mat &Ires){
 	vector<Mat> S, L, E, Pond;
@@ -145,16 +125,12 @@ void calcul_mat(vector<Mat> v,Mat &Ires){
 
 			}
 		}
-		
-
 	}
 	Ires = v.at(0);
 
 	for (int i = 0; i < m; i++) {
 		for (int j = 0; j < n; j++) {
-
 			int pondsum = 0.;
-
 			Ires.at<Vec3b>(i, j)[0] = 0.;
 			Ires.at<Vec3b>(i, j)[1] = 0.;
 			Ires.at<Vec3b>(i, j)[2] = 0.;
