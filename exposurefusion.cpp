@@ -93,7 +93,37 @@ int main(int argc, char** argv){
 	vector<Mat> greenFinalLaplacianPyramid;  //L{R} in the text
 	vector<Mat> redFinalLaplacianPyramid;  //L{R} in the text
 
+	int L = blueLaplacianPyramids[0].size();
+	for (int l = 0; l < L; l++) {
+		int m = blueLaplacianPyramids[0][l].rows;
+		int n = blueLaplacianPyramids[0][l].cols;
+		Mat bluePicture = Mat(m, n, CV_32F);
+		Mat greenPicture = Mat(m, n, CV_32F);
+		Mat redPicture = Mat(m, n, CV_32F);
+		for (int i = 0; i < m; i++) {
+			for (int j = 0; j < n; j++) {
+				bluePicture.at<float>(i, j) = 0.;
+				greenPicture.at<float>(i, j) = 0.;
+				redPicture.at<float>(i, j) = 0.;
+				for (int k = 0; k < NUMBER_OF_PICTURES; k++) {
+					bluePicture.at<float>(i, j) += gaussianPyramids[k][l].at<float>(i, j) * blueLaplacianPyramids[k][l].at<float>(i, j);
+					greenPicture.at<float>(i, j) += gaussianPyramids[k][l].at<float>(i, j) * greenLaplacianPyramids[k][l].at<float>(i, j);
+					redPicture.at<float>(i, j) += gaussianPyramids[k][l].at<float>(i, j) * redLaplacianPyramids[k][l].at<float>(i, j);
+				}
+			}
+		}
+		blueFinalLaplacianPyramid.push_back(bluePicture);
+		greenFinalLaplacianPyramid.push_back(greenPicture);
+		redFinalLaplacianPyramid.push_back(redPicture);
+	}
 
+
+	/*
+	Mat blueFinalPicture, greenFinalPicture, redFinalPicture;
+	reconstructPictureWithLaplacianPyramid(blueFinalLaplacianPyramid, blueFinalPicture);
+	reconstructPictureWithLaplacianPyramid(greenFinalLaplacianPyramid, greenFinalPicture);
+	reconstructPictureWithLaplacianPyramid(redFinalLaplacianPyramid, redFinalPicture);
+	*/
 
 
 	
