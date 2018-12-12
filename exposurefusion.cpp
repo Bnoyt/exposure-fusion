@@ -62,9 +62,7 @@ int main(int argc, char** argv){
 	}
 
 
-	vector<Mat> blueFinalLaplacianPyramid;  //L{R} in the text
-	vector<Mat> greenFinalLaplacianPyramid;  //L{R} in the text
-	vector<Mat> redFinalLaplacianPyramid;  //L{R} in the text
+	
 	vector<vector<Mat> > blueLaplacianPyramids;  //L{I} in the text
 	vector<vector<Mat> > greenLaplacianPyramids;  //L{I} in the text
 	vector<vector<Mat> > redLaplacianPyramids;  //L{I} in the text
@@ -79,6 +77,8 @@ int main(int argc, char** argv){
 		gaussianPyramids.push_back(gaussianPyramid);
 	}
 
+	// Initialize the Laplacian pyramid of the 3 colors pictures
+
 	for (int picture = 0; picture < NUMBER_OF_PICTURES; picture++) {
 		vector<Mat> laplacianPyramid;
 		computeLaplacianPyramid(src_B[picture], laplacianPyramid);
@@ -89,36 +89,14 @@ int main(int argc, char** argv){
 		redLaplacianPyramids.push_back(laplacianPyramid);
 	}
 
+	vector<Mat> blueFinalLaplacianPyramid;  //L{R} in the text
+	vector<Mat> greenFinalLaplacianPyramid;  //L{R} in the text
+	vector<Mat> redFinalLaplacianPyramid;  //L{R} in the text
 
-	/*
-	for (int k = 0; k < (int) log2(min(m, n)); k++) {
-		Mat M1, M2, M3;
-		pyrDown(gaussianPyramids[0][k], M1);
-		pyrDown(gaussianPyramids[1][k], M2);
-		pyrDown(gaussianPyramids[2][k], M3);
-		gaussianPyramids[0].push_back(M1);
-		gaussianPyramids[1].push_back(M2);
-		gaussianPyramids[2].push_back(M3);
-		size_m.push_back(M1.rows);
-		size_n.push_back(M2.cols);
 
-		Mat N1, N2, N3;
-		Size size = Size(size_n[k], size_m[k]);
 
-		pyrUp(laplacian_b_1, N1, size);
-		pyrUp(laplacian_b_1, N1, size);
-		pyrUp(laplacian_b_1, N1, size);
 
-		cout << "Pyramid up done" << endl;
-		Mat O = Mat(size_m[k], size_n[k], CV_32F);
-		for (int i = 0; i < size_m[k]; i++) {
-			for (int j = 0; j < size_n[k]; j++) {
-				O.at<float>(i, j) = gaussianPyramid[k].at<float>(i, j) - N.at<float>(i, j);
-			}
-		}
-		laplacianPyramid.push_back(O);
-	}
-	*/
+	
 
 
 
