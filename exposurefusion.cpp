@@ -36,18 +36,19 @@ int main(int argc, char** argv){
 		weights.push_back(weight);
 		Mat bgr[3];
 		split(src_color[picture], bgr);
+		bgr[0].convertTo(bgr[0], CV_32F);
+		bgr[1].convertTo(bgr[1], CV_32F);
+		bgr[2].convertTo(bgr[2], CV_32F);
 		src_B.push_back(bgr[0]);
 		src_G.push_back(bgr[1]);
 		src_R.push_back(bgr[2]);
 	}
 	
 	
-	/*
 	int m = weights[0].rows;
 	int n = weights[0].cols;
 
-	cout << m << " " << n << endl;
-
+	
 	for (int i = 0; i < m; i++) {
 		for (int j = 0; j < n; j++) {
 			double w = 0;
@@ -60,9 +61,13 @@ int main(int argc, char** argv){
 		}
 	}
 
-	
-	vector<Mat> finalLaplacianPyramid;  //L{R} in the text
-	vector<vector<Mat> > laplacianPyramids;  //L{I} in the text
+
+	vector<Mat> blueFinalLaplacianPyramid;  //L{R} in the text
+	vector<Mat> greenFinalLaplacianPyramid;  //L{R} in the text
+	vector<Mat> redFinalLaplacianPyramid;  //L{R} in the text
+	vector<vector<Mat> > blueLaplacianPyramids;  //L{I} in the text
+	vector<vector<Mat> > greenLaplacianPyramids;  //L{I} in the text
+	vector<vector<Mat> > redLaplacianPyramids;  //L{I} in the text
 	vector<vector<Mat> > gaussianPyramids;  //G{W} in the text
 	
 
@@ -76,11 +81,14 @@ int main(int argc, char** argv){
 
 	for (int picture = 0; picture < NUMBER_OF_PICTURES; picture++) {
 		vector<Mat> laplacianPyramid;
-		computeLaplacianPyramid(weights[picture], laplacianPyramid);
-		laplacianPyramids.push_back(laplacianPyramid);
+		computeLaplacianPyramid(src_B[picture], laplacianPyramid);
+		blueLaplacianPyramids.push_back(laplacianPyramid);
+		computeLaplacianPyramid(src_G[picture], laplacianPyramid);
+		greenLaplacianPyramids.push_back(laplacianPyramid);
+		computeLaplacianPyramid(src_R[picture], laplacianPyramid);
+		redLaplacianPyramids.push_back(laplacianPyramid);
 	}
 
-	*/
 
 	/*
 	for (int k = 0; k < (int) log2(min(m, n)); k++) {
