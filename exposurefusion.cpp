@@ -117,15 +117,11 @@ int main(int argc, char** argv){
 		redFinalLaplacianPyramid.push_back(redPicture);
 	}
 
-
-	/*
+	
 	Mat blueFinalPicture, greenFinalPicture, redFinalPicture;
 	reconstructPictureWithLaplacianPyramid(blueFinalLaplacianPyramid, blueFinalPicture);
 	reconstructPictureWithLaplacianPyramid(greenFinalLaplacianPyramid, greenFinalPicture);
 	reconstructPictureWithLaplacianPyramid(redFinalLaplacianPyramid, redFinalPicture);
-	*/
-
-
 	
 
 
