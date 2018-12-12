@@ -28,15 +28,15 @@ void computeLaplacianPyramid(Mat& originalPicture, vector<Mat>& laplacianPyramid
 	int m = originalPicture.rows;
 	int n = originalPicture.cols;
 	int new_m, new_n;
-	Mat* largePicture = new Mat();
-	Mat* smallPicture = new Mat();
 	Mat bigReconstruction, difference;
+	Mat* largePicture = new Mat();
 	*largePicture = originalPicture;
+	Mat* smallPicture = new Mat();
 	for (int k = 0; k < (int)log2(min(m, n)); k++) {
 		pyrDown(*largePicture, *smallPicture);
-		new_m = (*largePicture).cols;
-		new_n = (*largePicture).rows;
-		Size dstsize = Size(n, m);
+		new_m = (*largePicture).rows;
+		new_n = (*largePicture).cols;
+		Size dstsize = Size(new_n, new_m);
 		pyrUp(*smallPicture, bigReconstruction, dstsize);
 		difference = Mat(new_m, new_n, CV_32F);
 		for (int i = 0; i < new_m; i++) {
