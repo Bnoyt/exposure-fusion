@@ -80,13 +80,16 @@ int main(int argc, char** argv){
 	// Initialize the Laplacian pyramid of the 3 colors pictures
 
 	for (int picture = 0; picture < NUMBER_OF_PICTURES; picture++) {
-		vector<Mat> laplacianPyramid;
-		computeLaplacianPyramid(src_B[picture], laplacianPyramid);
-		blueLaplacianPyramids.push_back(laplacianPyramid);
-		computeLaplacianPyramid(src_G[picture], laplacianPyramid);
-		greenLaplacianPyramids.push_back(laplacianPyramid);
-		computeLaplacianPyramid(src_R[picture], laplacianPyramid);
-		redLaplacianPyramids.push_back(laplacianPyramid);
+		vector<Mat> blueLaplacianPyramid, greenLaplacianPyramid, redLaplacianPyramid;
+
+		computeLaplacianPyramid(src_B[picture], blueLaplacianPyramid);
+		blueLaplacianPyramids.push_back(blueLaplacianPyramid);
+
+		computeLaplacianPyramid(src_G[picture], greenLaplacianPyramid);
+		greenLaplacianPyramids.push_back(greenLaplacianPyramid);
+
+		computeLaplacianPyramid(src_R[picture], redLaplacianPyramid);
+		redLaplacianPyramids.push_back(redLaplacianPyramid);
 	}
 
 	vector<Mat> blueFinalLaplacianPyramid;  //L{R} in the text
@@ -94,9 +97,11 @@ int main(int argc, char** argv){
 	vector<Mat> redFinalLaplacianPyramid;  //L{R} in the text
 
 	int L = blueLaplacianPyramids[0].size();
+
 	for (int l = 0; l < L; l++) {
 		int m = blueLaplacianPyramids[0][l].rows;
 		int n = blueLaplacianPyramids[0][l].cols;
+
 		Mat bluePicture = Mat(m, n, CV_32F);
 		Mat greenPicture = Mat(m, n, CV_32F);
 		Mat redPicture = Mat(m, n, CV_32F);
@@ -122,8 +127,28 @@ int main(int argc, char** argv){
 	reconstructPictureWithLaplacianPyramid(blueFinalLaplacianPyramid, blueFinalPicture);
 	reconstructPictureWithLaplacianPyramid(greenFinalLaplacianPyramid, greenFinalPicture);
 	reconstructPictureWithLaplacianPyramid(redFinalLaplacianPyramid, redFinalPicture);
-	
 
+
+	/*
+	Mat final_bgr[3];
+	Mat out;
+	final_bgr[0] = blueFinalPicture;
+	final_bgr[1] = greenFinalPicture;
+	final_bgr[2] = redFinalPicture;
+
+	merge(final_bgr, 3, out);
+
+	imshow("out", out);
+	*/
+
+	cout << blueFinalPicture.at<float>(100, 20) << endl;
+	cout << greenFinalPicture.at<float>(100, 20) << endl;
+	cout << redFinalPicture.at<float>(100, 20) << endl;
+
+
+
+
+	cout << "Program over" << endl;
 
 
 	waitKey(0);
