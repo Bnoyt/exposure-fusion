@@ -1,4 +1,5 @@
 #include "image.h"
+#include "pyramids.h"
 #include <opencv2/highgui/highgui.hpp>
 #include <iostream>
 #include<vector>
@@ -50,26 +51,21 @@ int main(int argc, char** argv){
 		}
 	}
 
-	/*
-
 	
 	vector<Mat> finalLaplacianPyramid;  //L{R} in the text
 	vector<vector<Mat> >;  //L{I} in the text
 	vector<vector<Mat> > gaussianPyramids;  //G{W} in the text
-
-	gaussianPyramids[0].push_back(weights_1);
-	gaussianPyramids[1].push_back(weights_2);
-	gaussianPyramids[2].push_back(weights_3);
 	
-	Mat laplacian_b_1, laplacian_b_2, laplacian_b_3;
-	laplacian_b_1 = src_color_1;
-	laplacian_b_2 = src_color_1;
-	laplacian_b_3 = src_color_3;
-	
-	size_m.push_back(m);
-	size_n.push_back(n);
 
+	/*
+	// Initialize the Gaussian pyramid of weights
+	
+	for (int picture = 0; picture < NUMBER_OF_PICTURES; picture++) {
+		vector<Mat> gaussianPyramid;
+		
+	}
 	*/
+
 	/*
 	for (int k = 0; k < (int) log2(min(m, n)); k++) {
 		Mat M1, M2, M3;
