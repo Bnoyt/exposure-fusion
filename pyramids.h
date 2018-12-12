@@ -8,4 +8,4 @@ using namespace std;
 
 void computeGaussianPyramid(Mat& originalPicture, vector<Mat>& gaussianPyramid);
 void computeLaplacianPyramid(Mat& originalPicture, vector<Mat>& laplacianPyramid);
-void reconstructPictureWithLaplacianPyramid(Mat& originalPicture, vector<Mat>&laplacianPyramid, Mat& finalPicture);
+void reconstructPictureWithLaplacianPyramid(vector<Mat>&laplacianPyramid, Mat& finalPicture);

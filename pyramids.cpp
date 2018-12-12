@@ -50,7 +50,7 @@ void computeLaplacianPyramid(Mat& originalPicture, vector<Mat>& laplacianPyramid
 	laplacianPyramid.push_back(*largePicture);
 }
 
-void reconstructPictureWithLaplacianPyramid(Mat& originalPicture, vector<Mat>&laplacianPyramid, Mat& finalPicture) {
+void reconstructPictureWithLaplacianPyramid(vector<Mat>&laplacianPyramid, Mat& finalPicture) {
 	int N = (int)laplacianPyramid.size();
 	Mat* largePicture = new Mat();
 	Mat* smallPicture = new Mat();
