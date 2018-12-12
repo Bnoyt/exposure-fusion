@@ -2,13 +2,9 @@
 #include <iostream>
 #include <cmath>
 #include <opencv2/highgui/highgui.hpp>
+
 // Correlation
 using namespace cv;
-
-
-const double alphaE = 0.5;
-const double alphaL = 0.5;
-const double alphaS = 0.5;
 
 
 double mean(const Image<float>& I,Point m,int n) {
@@ -40,15 +36,28 @@ double NCC(const Image<float>& I1,Point m1,const Image<float>& I2,Point m2,int n
 	return corr(I1,m1,I2,m2,n)/sqrt(c1*c2);
 }
 
-//Saturation
+// Laplacian
+void Laplacian(const Mat&src_gray, Mat& posL) {
+	int m = src_gray.rows;
+	int n = src_gray.cols;
+	Mat L;
+	Laplacian(src_gray, L, CV_8U, 11);
+	convertScaleAbs(L, L);
+	posL = Mat(m, n, CV_32F);
+	for (int i = 0;i < m;i++) {
+		for (int j = 0;j < n;j++) {
+			posL.at<float>(i, j) = ((float) L.at<uchar>(i,j)) + 1e-2;
+		}
+	}
+}
 
-void Saturation(const Mat& Ic, Mat& S){
+//Saturation
+void Saturation(const Mat& src_color, Mat& S){
 	Mat I;
-	cvtColor(Ic, I, CV_BGR2HSV);
+	cvtColor(src_color, I, CV_BGR2HSV);
 	int m = I.rows;
 	int n = I.cols;
 	S = Mat(m, n, CV_32F);
-
 	for(int i=0;i<m;i++){
 		for(int j=0;j<n;j++){
 			S.at<float>(i,j) = (float)I.at<Vec3b>(i,j)[1];
@@ -57,123 +66,35 @@ void Saturation(const Mat& Ic, Mat& S){
 }
 
 // Well-exposedness
-
-void WellExposedness(const Mat&Ic, Mat& E){
+void WellExposedness(const Mat&src_gray, Mat& E){
 	float sigma = 0.2;
-	Mat I, F;
-	cvtColor(Ic, I, CV_BGR2GRAY);
-	I.convertTo(F, CV_32F);
-	int m = I.rows, n = I.cols;
+	int m = src_gray.rows, n = src_gray.cols;
 	E = Mat(m, n, CV_32F);
 	for(int i = 0;i < m; i++){
 		for(int j=0;j<n;j++){
-			E.at<float>(i,j) = exp(-(F.at<float>(i,j)/255 - 0.5)*(F.at<float>(i,j)/255 - 0.5)/(2*sigma*sigma));
+			E.at<float>(i,j) = exp(-((float)src_gray.at<char>(i,j)/255. - 0.5)*((float)src_gray.at<char>(i,j)/255. - 0.5)/(2*sigma*sigma));
 		}
 	}
 
-}
-
-const double a = .4;
-const double b = .25;
-const double c = .25 - a / 2;
-
-double w(int n) {
-	if (n == 0) return a;
-	if (n == 1 || n==-1) return b;
-	return c;
-}
-double w(int n, int m) {
-	return w(n)*w(m);
-}
-
-void reduceImage(const Mat& F, Mat& F2) {
-	int m = F.rows / 2;
-	int n = F.cols / 2;
-	F2 = Mat(m, n, CV_8U);
-	for (int i = 0; i < m; i++) {
-		for (int j = 0; j < n; j++) {
-			if (i < 2 || i>m-2 || j < 2 || j > n - 2) {
-				F2.at<uchar>(i, j) = 0;
-			}
-			else {
-				double value = 0.;
-				for (int m = -2; m <= 2; m++){
-					for (int n = -2; n <= 2; n++) {
-						value += w(n, m) * (int) F.at<uchar>(2 * i + m, 2 * j + n);
-						F2.at<uchar>(i, j) = (char)value;
-					}
-				}
-			}
-		}
-	}
 }
 
 const double alphaS = 1.;
 const double alphaE = 1.;
 const double alphaL = 1.;
 
-void calcul_mat(vector<Mat> v,Mat &Ires){
-	vector<Mat> S, L, E, Pond;
-	int m = v.at(0).rows, n = v.at(0).cols;
-	for (vector<Mat>::iterator it = v.begin() ; it != v.end(); ++it){
-		Mat s,l,e,p;
-
-		Laplacian(*it,l,7);
-		Saturation(*it,l);
-		WellExposedness(*it,e);
-
-		S.push_back(s);
-		E.push_back(e);
-		L.push_back(l);
-
-		p = Mat(m, n, CV_32F);
-
-
-		for (int i = 0; i < m; i++) {
-			for (int j = 0; j < n; j++) {
-				if (abs(l.at<float>(i,j)) == numeric_limits<float>::infinity()) l.at<float>(i,j) = 1000000000000000;
-				p.at<float>(i,j) = pow(e.at<float>(i,j),alphaE) + pow(s.at<float>(i,j),alphaS) + 0.1*log(pow(l.at<float>(i,j),alphaL))  ;
-				cout << log(pow(l.at<float>(i,j),alphaL)) << endl;
-				if (log(pow(l.at<float>(i,j),alphaL)) > 100.) cout << pow(l.at<float>(i,j),alphaL) << endl;
-
-			}
+void compute_Weigth_Mat(Mat& src_color, Mat &W) {
+	Mat L, S, E;
+	Mat src_gray, F;
+	cvtColor(src_color, src_gray, CV_RGB2GRAY);
+	Laplacian(src_gray, L);
+	Saturation(src_color, S);
+	WellExposedness(src_gray, E);
+	int m = src_gray.rows, n = src_gray.cols;
+	W = Mat(m, n, CV_32F);
+	for (int i = 0;i < m; i++) {
+		for (int j = 0;j < n;j++) {
+			W.at<float>(i, j) = L.at<float>(i,j) * S.at<float>(i,j) * E.at<float>(i,j) + 1e-5;
 		}
 	}
-
-	Mat kaz = imread("../grandcanal_under.jpg");
-
-	Ires = kaz;
-
-	for (int i = 0; i < m; i++) {
-		for (int j = 0; j < n; j++) {
-			int pondsum = 0.;
-			Ires.at<Vec3b>(i, j)[0] = 0.;
-			Ires.at<Vec3b>(i, j)[1] = 0.;
-			Ires.at<Vec3b>(i, j)[2] = 0.;
-
-			for (int k = 0;k<v.size();k++){
-				pondsum = pondsum + Pond.at(k).at<float>(i,j);
-			}
-
-			for (int k = 0;k<v.size();k++){
-				pondsum = pondsum + Pond.at(k).at<float>(i,j);
-				Ires.at<Vec3b>(i, j)[0] = Ires.at<Vec3b>(i, j)[0] + Pond.at(k).at<float>(i,j) * (double) v.at(k).at<Vec3b>(i, j)[0] / pondsum;
-				Ires.at<Vec3b>(i, j)[1] = Ires.at<Vec3b>(i, j)[1] + Pond.at(k).at<float>(i,j) * (double) v.at(k).at<Vec3b>(i, j)[1] / pondsum;
-				Ires.at<Vec3b>(i, j)[2] = Ires.at<Vec3b>(i, j)[2] + Pond.at(k).at<float>(i,j) * (double) v.at(k).at<Vec3b>(i, j)[2] / pondsum;
-			}
-
-
-			Ires.at<Vec3b>(i, j)[0] = Ires.at<Vec3b>(i, j)[0]*2;
-			Ires.at<Vec3b>(i, j)[1] = Ires.at<Vec3b>(i, j)[1]*2;
-			Ires.at<Vec3b>(i, j)[2] = Ires.at<Vec3b>(i, j)[2]*2;
-
-		}
-	}
-	cout << v.at(0).at<Vec3b>(0,0) << endl;
-	cout << v.at(1).at<Vec3b>(0,0) << endl;
-	cout << v.at(2).at<Vec3b>(0,0) << endl;
-	cout << Ires.at<Vec3b>(0,0) << endl;
-
-
-
 }
+

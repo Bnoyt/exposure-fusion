@@ -56,8 +56,7 @@ public:
 double NCC(const Image<float>& I1,Point m1,const Image<float>& I2,Point m2,int n);
 
 // Laplacian
-//void Laplacian(const Mat&Ic, Mat& G2);
-void Saturation(const Mat& Ic, Mat& S);
-void WellExposedness(const Mat&Ic, Mat& E);
-void reduceImage(const Mat& I1, Mat& I2);
-void calcul_mat(vector<Mat> v,Mat &Ires);
+void Laplacian(const Mat&src_gray, Mat& dest);
+void Saturation(const Mat& src_color, Mat& S);
+void WellExposedness(const Mat&src_gray_CV_32F, Mat& E);
+void compute_Weigth_Mat(Mat& src_color, Mat &W);
