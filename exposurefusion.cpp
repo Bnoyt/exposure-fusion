@@ -57,14 +57,13 @@ int main(int argc, char** argv){
 	vector<vector<Mat> > gaussianPyramids;  //G{W} in the text
 	
 
-	/*
 	// Initialize the Gaussian pyramid of weights
 	
 	for (int picture = 0; picture < NUMBER_OF_PICTURES; picture++) {
 		vector<Mat> gaussianPyramid;
-		
+		computeGaussianPyramid(weights[picture], gaussianPyramid);
+		gaussianPyramids.push_back(gaussianPyramid);
 	}
-	*/
 
 	/*
 	for (int k = 0; k < (int) log2(min(m, n)); k++) {
