@@ -26,25 +26,31 @@ int main(int argc, char** argv){
 	src_color.push_back(src_color_3);
 
 	Mat weight;
-	/*
+	
 	for (int picture = 0; picture < NUMBER_OF_PICTURES; picture++) {
 		compute_Weigth_Mat(src_color[picture], weight);
 		weights.push_back(weight);
 	}
-	*/
+	
 
-	//int m = weights[0].rows;
-	//int n = weights[0].cols;
-	/*
+	int m = weights[0].rows;
+	int n = weights[0].cols;
+
+	cout << m << " " << n << endl;
+
 	for (int i = 0; i < m; i++) {
 		for (int j = 0; j < n; j++) {
 			double w = 0;
-			for (int picture)
-			weights_1.at<float>(i, j) = weights_1.at<float>(i, j) / w;
-			weights_2.at<float>(i, j) = weights_2.at<float>(i, j) / w;
-			weights_3.at<float>(i, j) = weights_3.at<float>(i, j) / w;
+			for (int picture = 0; picture < NUMBER_OF_PICTURES; picture++) {
+				w += weights[picture].at<float>(i, j);
+			}
+			for (int picture = 0; picture < NUMBER_OF_PICTURES; picture++) {
+				weights[picture].at<float>(i, j) = weights[picture].at<float>(i, j) / w;
+			}
 		}
 	}
+
+	/*
 
 	
 	vector<Mat> finalLaplacianPyramid;  //L{R} in the text
