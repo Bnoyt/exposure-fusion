@@ -9,22 +9,21 @@ using namespace cv;
 using namespace std;
 
 
-void computeGaussianPyramid(Mat& originalPicture, vector<Mat>* gaussianPyramid) {
-	gaussianPyramid = new vector<Mat>;
+void computeGaussianPyramid(Mat& originalPicture, vector<Mat>& gaussianPyramid) {
 	int m = originalPicture.rows;
 	int n = originalPicture.cols;
-	(*gaussianPyramid).push_back(originalPicture);
+	gaussianPyramid.push_back(originalPicture);
 	Mat* largePicture = new Mat();
 	Mat* smallPicture = new Mat();
 	*largePicture = originalPicture;
 	for (int k = 0; k < (int)log2(min(m, n)); k++) {
 		pyrDown(*largePicture, *smallPicture);
-		(*gaussianPyramid).push_back(*smallPicture);
+		gaussianPyramid.push_back(*smallPicture);
 		*largePicture = *smallPicture;
 	}
 }
 
-void computeLaplacianPyramid(Mat& originalPicture, vector<Mat>* laplacianPyramid) {
+void computeLaplacianPyramid(Mat& originalPicture, vector<Mat>& laplacianPyramid) {
 	int m = originalPicture.rows;
 	int n = originalPicture.cols;
 	int new_m, new_n;
@@ -44,13 +43,13 @@ void computeLaplacianPyramid(Mat& originalPicture, vector<Mat>* laplacianPyramid
 				difference.at<float>(i, j) = (*largePicture).at<float>(i, j) - bigReconstruction.at<float>(i, j);
 			}
 		}
-		(*laplacianPyramid).push_back(difference);
+		laplacianPyramid.push_back(difference);
 		*largePicture = *smallPicture;
 	}
-	(*laplacianPyramid).push_back(*largePicture);
+	laplacianPyramid.push_back(*largePicture);
 }
 
-void reconstructPictureWithLaplacianPyramid(Mat& originalPicture, vector<Mat>&laplacianPyramid, Mat* finalPicture) {
+void reconstructPictureWithLaplacianPyramid(Mat& originalPicture, vector<Mat>&laplacianPyramid, Mat& finalPicture) {
 	int N = (int)laplacianPyramid.size();
 	Mat* largePicture = new Mat();
 	Mat* smallPicture = new Mat();
@@ -71,5 +70,5 @@ void reconstructPictureWithLaplacianPyramid(Mat& originalPicture, vector<Mat>&la
 		}
 		*smallPicture = *largePicture;
 	}
-	*finalPicture = *largePicture;
+	finalPicture = *largePicture;
 }
