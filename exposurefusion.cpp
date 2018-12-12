@@ -17,6 +17,9 @@ int main(int argc, char** argv){
 	const int NUMBER_OF_PICTURES = 3;
 
 	vector<Mat> src_color;
+	vector<Mat> src_B;
+	vector<Mat> src_G;
+	vector<Mat> src_R;
 	vector<Mat> weights;
 
 	Mat src_color_1 = imread("../image1.jpg");
@@ -31,9 +34,15 @@ int main(int argc, char** argv){
 	for (int picture = 0; picture < NUMBER_OF_PICTURES; picture++) {
 		compute_Weigth_Mat(src_color[picture], weight);
 		weights.push_back(weight);
+		Mat bgr[3];
+		split(src_color[picture], bgr);
+		src_B.push_back(bgr[0]);
+		src_G.push_back(bgr[1]);
+		src_R.push_back(bgr[2]);
 	}
 	
-
+	
+	/*
 	int m = weights[0].rows;
 	int n = weights[0].cols;
 
@@ -53,7 +62,7 @@ int main(int argc, char** argv){
 
 	
 	vector<Mat> finalLaplacianPyramid;  //L{R} in the text
-	vector<vector<Mat> >;  //L{I} in the text
+	vector<vector<Mat> > laplacianPyramids;  //L{I} in the text
 	vector<vector<Mat> > gaussianPyramids;  //G{W} in the text
 	
 
@@ -64,6 +73,14 @@ int main(int argc, char** argv){
 		computeGaussianPyramid(weights[picture], gaussianPyramid);
 		gaussianPyramids.push_back(gaussianPyramid);
 	}
+
+	for (int picture = 0; picture < NUMBER_OF_PICTURES; picture++) {
+		vector<Mat> laplacianPyramid;
+		computeLaplacianPyramid(weights[picture], laplacianPyramid);
+		laplacianPyramids.push_back(laplacianPyramid);
+	}
+
+	*/
 
 	/*
 	for (int k = 0; k < (int) log2(min(m, n)); k++) {
