@@ -122,34 +122,58 @@ int main(int argc, char** argv){
 		redFinalLaplacianPyramid.push_back(redPicture);
 	}
 
+	cout << blueFinalLaplacianPyramid[blueFinalLaplacianPyramid.size() - 1].rows << " " << blueFinalLaplacianPyramid[blueFinalLaplacianPyramid.size() - 1].cols << endl;
+	cout << blueFinalLaplacianPyramid[blueFinalLaplacianPyramid.size() - 2].rows << " " << blueFinalLaplacianPyramid[blueFinalLaplacianPyramid.size() - 2].cols << endl;
+
+	cout << endl << "Blue" << endl;
+
+	cout << blueFinalLaplacianPyramid[blueFinalLaplacianPyramid.size() - 1].at<float>(0, 0) << " " << blueFinalLaplacianPyramid[blueFinalLaplacianPyramid.size() - 1].at<float>(0, 1) << " " << blueFinalLaplacianPyramid[blueFinalLaplacianPyramid.size() - 1].at<float>(0, 2) << endl;
+	cout << blueFinalLaplacianPyramid[blueFinalLaplacianPyramid.size() - 1].at<float>(1, 0) << " " << blueFinalLaplacianPyramid[blueFinalLaplacianPyramid.size() - 1].at<float>(1, 1) << " " << blueFinalLaplacianPyramid[blueFinalLaplacianPyramid.size() - 1].at<float>(1, 2) << endl;
+
+	cout << endl << "Green" << endl;
+	cout << greenFinalLaplacianPyramid[greenFinalLaplacianPyramid.size() - 1].at<float>(0, 0) << " " << greenFinalLaplacianPyramid[greenFinalLaplacianPyramid.size() - 1].at<float>(0, 1) << " " << greenFinalLaplacianPyramid[greenFinalLaplacianPyramid.size() - 1].at<float>(0, 2) << endl;
+	cout << greenFinalLaplacianPyramid[greenFinalLaplacianPyramid.size() - 1].at<float>(1, 0) << " " << greenFinalLaplacianPyramid[greenFinalLaplacianPyramid.size() - 1].at<float>(1, 1) << " " << greenFinalLaplacianPyramid[greenFinalLaplacianPyramid.size() - 1].at<float>(1, 2) << endl;
+
 	
 	Mat blueFinalPicture, greenFinalPicture, redFinalPicture;
 	reconstructPictureWithLaplacianPyramid(blueFinalLaplacianPyramid, blueFinalPicture);
 	reconstructPictureWithLaplacianPyramid(greenFinalLaplacianPyramid, greenFinalPicture);
 	reconstructPictureWithLaplacianPyramid(redFinalLaplacianPyramid, redFinalPicture);
 
+	/*
+	cout << endl;
+	cout << "Blue " << blueFinalPicture.rows << " " << blueFinalPicture.cols << endl;
+	cout << "Green " << greenFinalPicture.rows << " " << greenFinalPicture.cols << endl;
+	cout << "Red " << redFinalPicture.rows << " " << redFinalPicture.cols << endl;
+	cout << "Picture " << src_color_1.rows << " " << src_color_1.cols << endl;
+	*/
+	
+	Mat finalPicture = src_color_1;
+	for (int i = 0; i < m; i++) {
+		for (int j = 0; j < n; j++) {
+			finalPicture.at<Vec3b>(i, j)[0] = (uchar)blueFinalPicture.at<float>(i, j);
+			finalPicture.at<Vec3b>(i, j)[1] = (uchar)greenFinalPicture.at<float>(i, j);
+			finalPicture.at<Vec3b>(i, j)[2] = (uchar)redFinalPicture.at<float>(i, j);
+		}
+	}
+
+	imshow("Final Picture", finalPicture);
+	imwrite("FinalPicture.png", finalPicture);
+	
+	
+
 
 	/*
-	Mat final_bgr[3];
-	Mat out;
-	final_bgr[0] = blueFinalPicture;
-	final_bgr[1] = greenFinalPicture;
-	final_bgr[2] = redFinalPicture;
+	cout << endl << "Color intensities in (100, 20):" << endl;
+	cout << "Blue: " << blueFinalPicture.at<float>(100, 20) << endl;
+	cout << "Green: " << greenFinalPicture.at<float>(100, 20) << endl;
+	cout << "Red: " << redFinalPicture.at<float>(100, 20) << endl;
+	
+	cout << endl << (int)src_color_3.at<Vec3b>(100, 20)[0] << " " << src_color_3.at<Vec3b>(100, 20) << endl;
 
-	merge(final_bgr, 3, out);
 
-	imshow("out", out);
+	cout << endl << "Program over" << endl;
 	*/
-
-	cout << blueFinalPicture.at<float>(100, 20) << endl;
-	cout << greenFinalPicture.at<float>(100, 20) << endl;
-	cout << redFinalPicture.at<float>(100, 20) << endl;
-
-
-
-
-	cout << "Program over" << endl;
-
 
 	waitKey(0);
 
