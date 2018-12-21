@@ -66,7 +66,7 @@ void reconstructPictureWithLaplacianPyramid(vector<Mat>&laplacianPyramid, Mat& f
 		*largePicture = Mat(new_m, new_n, CV_32F);
 		for (int i = 0; i < new_m; i++) {
 			for (int j = 0; j < new_n; j++) {
-				(*largePicture).at<float>(i, j) = bigReconstruction.at<float>(i, j) + difference.at<float>(i, j);
+				(*largePicture).at<float>(i, j) = min(max(bigReconstruction.at<float>(i, j) + difference.at<float>(i, j), (float)0.), (float) 255.);
 			}
 		}
 		*smallPicture = *largePicture;

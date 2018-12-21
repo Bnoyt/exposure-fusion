@@ -41,15 +41,18 @@ void Laplacian(const Mat&src_gray, Mat& posL) {
 	int m = src_gray.rows;
 	int n = src_gray.cols;
 	Mat L;
-	Laplacian(src_gray, L, CV_8U, 11);
+	Laplacian(src_gray, L, CV_8U, 3);
 	convertScaleAbs(L, L);
 	posL = Mat(m, n, CV_32F);
 	for (int i = 0;i < m;i++) {
 		for (int j = 0;j < n;j++) {
-			posL.at<float>(i, j) = ((float) L.at<uchar>(i,j)) + 1e-2;
+			posL.at<float>(i, j) = ((float) L.at<uchar>(i,j)) + 0.01;
 		}
 	}
 }
+
+double minSat = 256.;
+double maxSat = 0.;
 
 //Saturation
 void Saturation(const Mat& src_color, Mat& S){
@@ -60,7 +63,7 @@ void Saturation(const Mat& src_color, Mat& S){
 	S = Mat(m, n, CV_32F);
 	for(int i=0;i<m;i++){
 		for(int j=0;j<n;j++){
-			S.at<float>(i,j) = (float)I.at<Vec3b>(i,j)[1];
+			S.at<float>(i, j) = (float)I.at<Vec3b>(i, j)[1] + 0.1;
 		}
 	}
 }
@@ -76,6 +79,13 @@ void WellExposedness(const Mat&src_gray, Mat& E){
 		}
 	}
 
+}
+void printMinSat() {
+	cout << minSat << endl;
+}
+
+void printMaxSat() {
+	cout << maxSat << endl;
 }
 
 const double alphaS = 1.;
@@ -93,7 +103,8 @@ void compute_Weigth_Mat(Mat& src_color, Mat &W) {
 	W = Mat(m, n, CV_32F);
 	for (int i = 0;i < m; i++) {
 		for (int j = 0;j < n;j++) {
-			W.at<float>(i, j) = L.at<float>(i,j) * S.at<float>(i,j) * E.at<float>(i,j) + 1e-5;
+			W.at<float>(i, j) = L.at<float>(i,j) * S.at<float>(i,j) * E.at<float>(i,j);
+			//W.at<float>(i, j) = S.at<float>(i, j) * E.at<float>(i, j);
 		}
 	}
 }

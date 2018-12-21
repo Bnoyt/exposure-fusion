@@ -14,7 +14,7 @@ using namespace std;
 
 int main(int argc, char** argv){
 
-	const int NUMBER_OF_PICTURES = 3;
+	const int NUMBER_OF_PICTURES = 16;
 
 	vector<Mat> src_color;
 	vector<Mat> src_B;
@@ -22,18 +22,43 @@ int main(int argc, char** argv){
 	vector<Mat> src_R;
 	vector<Mat> weights;
 
-	Mat src_color_1 = imread("../image1.jpg");
-	Mat src_color_2 = imread("../image2.jpg");
-	Mat src_color_3 = imread("../image3.jpg");
-	src_color.push_back(src_color_1);
-	src_color.push_back(src_color_2);
-	src_color.push_back(src_color_3);
+	
+	cout << "Loading the pictures..." << endl;
+	
+	src_color.push_back(imread("../memorial0061.jpg"));
+	src_color.push_back(imread("../memorial0062.jpg"));
+	src_color.push_back(imread("../memorial0063.jpg"));
+	src_color.push_back(imread("../memorial0064.jpg"));
+	src_color.push_back(imread("../memorial0065.jpg"));
+	src_color.push_back(imread("../memorial0066.jpg"));
+	src_color.push_back(imread("../memorial0067.jpg"));
+	src_color.push_back(imread("../memorial0068.jpg"));
+	src_color.push_back(imread("../memorial0069.jpg"));
+	src_color.push_back(imread("../memorial0070.jpg"));
+	src_color.push_back(imread("../memorial0071.jpg"));
+	src_color.push_back(imread("../memorial0072.jpg"));
+	src_color.push_back(imread("../memorial0073.jpg"));
+	src_color.push_back(imread("../memorial0074.jpg"));
+	src_color.push_back(imread("../memorial0075.jpg"));
+	src_color.push_back(imread("../memorial0076.jpg"));
+	/*
+	src_color.push_back(imread("../image1.jpg"));
+	src_color.push_back(imread("../image2.jpg"));
+	src_color.push_back(imread("../image3.jpg"));
+	*/
+	cout << "Done." << endl;
+
 
 	Mat weight;
+
+	cout << "Computing src_B, src_G, src_R..." << endl;
 	
 	for (int picture = 0; picture < NUMBER_OF_PICTURES; picture++) {
+		//cout << "A" << endl;
 		compute_Weigth_Mat(src_color[picture], weight);
+		//cout << "B" << endl;
 		weights.push_back(weight);
+		//cout << "C" << endl;
 		Mat bgr[3];
 		split(src_color[picture], bgr);
 		bgr[0].convertTo(bgr[0], CV_32F);
@@ -43,15 +68,18 @@ int main(int argc, char** argv){
 		src_G.push_back(bgr[1]);
 		src_R.push_back(bgr[2]);
 	}
+	cout << "Done." << endl;
 	
 	
 	int m = weights[0].rows;
 	int n = weights[0].cols;
 
+
+	cout << "Computing weights..." << endl;
 	
 	for (int i = 0; i < m; i++) {
 		for (int j = 0; j < n; j++) {
-			double w = 0;
+			float w = 0;
 			for (int picture = 0; picture < NUMBER_OF_PICTURES; picture++) {
 				w += weights[picture].at<float>(i, j);
 			}
@@ -60,6 +88,7 @@ int main(int argc, char** argv){
 			}
 		}
 	}
+	cout << "Done." << endl;
 
 
 	
@@ -71,13 +100,17 @@ int main(int argc, char** argv){
 
 	// Initialize the Gaussian pyramid of weights
 	
+	cout << "Computing Gaussian pyramid of weigths..." << endl;
 	for (int picture = 0; picture < NUMBER_OF_PICTURES; picture++) {
 		vector<Mat> gaussianPyramid;
 		computeGaussianPyramid(weights[picture], gaussianPyramid);
 		gaussianPyramids.push_back(gaussianPyramid);
 	}
+	cout << "Done." << endl;
 
-	// Initialize the Laplacian pyramid of the 3 colors pictures
+	// Initialize the Laplacian pyramids of the 3 colors pictures
+
+	cout << "Computing Laplacian pyramids of the 3 colors pictures..." << endl;
 
 	for (int picture = 0; picture < NUMBER_OF_PICTURES; picture++) {
 		vector<Mat> blueLaplacianPyramid, greenLaplacianPyramid, redLaplacianPyramid;
@@ -92,11 +125,15 @@ int main(int argc, char** argv){
 		redLaplacianPyramids.push_back(redLaplacianPyramid);
 	}
 
+	cout << "Done." << endl;
+
 	vector<Mat> blueFinalLaplacianPyramid;  //L{R} in the text
 	vector<Mat> greenFinalLaplacianPyramid;  //L{R} in the text
 	vector<Mat> redFinalLaplacianPyramid;  //L{R} in the text
 
 	int L = blueLaplacianPyramids[0].size();
+
+	cout << "Computing final Laplacian pyramids for each of the 3 colors..." << endl;
 
 	for (int l = 0; l < L; l++) {
 		int m = blueLaplacianPyramids[0][l].rows;
@@ -122,17 +159,19 @@ int main(int argc, char** argv){
 		redFinalLaplacianPyramid.push_back(redPicture);
 	}
 
+	cout << "Done." << endl;
+
 	cout << blueFinalLaplacianPyramid[blueFinalLaplacianPyramid.size() - 1].rows << " " << blueFinalLaplacianPyramid[blueFinalLaplacianPyramid.size() - 1].cols << endl;
 	cout << blueFinalLaplacianPyramid[blueFinalLaplacianPyramid.size() - 2].rows << " " << blueFinalLaplacianPyramid[blueFinalLaplacianPyramid.size() - 2].cols << endl;
 
 	cout << endl << "Blue" << endl;
 
-	cout << blueFinalLaplacianPyramid[blueFinalLaplacianPyramid.size() - 1].at<float>(0, 0) << " " << blueFinalLaplacianPyramid[blueFinalLaplacianPyramid.size() - 1].at<float>(0, 1) << " " << blueFinalLaplacianPyramid[blueFinalLaplacianPyramid.size() - 1].at<float>(0, 2) << endl;
-	cout << blueFinalLaplacianPyramid[blueFinalLaplacianPyramid.size() - 1].at<float>(1, 0) << " " << blueFinalLaplacianPyramid[blueFinalLaplacianPyramid.size() - 1].at<float>(1, 1) << " " << blueFinalLaplacianPyramid[blueFinalLaplacianPyramid.size() - 1].at<float>(1, 2) << endl;
+	cout << blueFinalLaplacianPyramid[blueFinalLaplacianPyramid.size() - 1].at<float>(0, 0) << " " << blueFinalLaplacianPyramid[blueFinalLaplacianPyramid.size() - 1].at<float>(0, 1) << endl;
+	cout << blueFinalLaplacianPyramid[blueFinalLaplacianPyramid.size() - 1].at<float>(1, 0) << " " << blueFinalLaplacianPyramid[blueFinalLaplacianPyramid.size() - 1].at<float>(1, 1) << endl;
 
 	cout << endl << "Green" << endl;
-	cout << greenFinalLaplacianPyramid[greenFinalLaplacianPyramid.size() - 1].at<float>(0, 0) << " " << greenFinalLaplacianPyramid[greenFinalLaplacianPyramid.size() - 1].at<float>(0, 1) << " " << greenFinalLaplacianPyramid[greenFinalLaplacianPyramid.size() - 1].at<float>(0, 2) << endl;
-	cout << greenFinalLaplacianPyramid[greenFinalLaplacianPyramid.size() - 1].at<float>(1, 0) << " " << greenFinalLaplacianPyramid[greenFinalLaplacianPyramid.size() - 1].at<float>(1, 1) << " " << greenFinalLaplacianPyramid[greenFinalLaplacianPyramid.size() - 1].at<float>(1, 2) << endl;
+	cout << greenFinalLaplacianPyramid[greenFinalLaplacianPyramid.size() - 1].at<float>(0, 0) << " " << greenFinalLaplacianPyramid[greenFinalLaplacianPyramid.size() - 1].at<float>(0, 1) << endl;
+	cout << greenFinalLaplacianPyramid[greenFinalLaplacianPyramid.size() - 1].at<float>(1, 0) << " " << greenFinalLaplacianPyramid[greenFinalLaplacianPyramid.size() - 1].at<float>(1, 1) << endl;
 
 	
 	Mat blueFinalPicture, greenFinalPicture, redFinalPicture;
@@ -148,7 +187,7 @@ int main(int argc, char** argv){
 	cout << "Picture " << src_color_1.rows << " " << src_color_1.cols << endl;
 	*/
 	
-	Mat finalPicture = src_color_1;
+	Mat finalPicture = src_color[0];
 	for (int i = 0; i < m; i++) {
 		for (int j = 0; j < n; j++) {
 			finalPicture.at<Vec3b>(i, j)[0] = (uchar)blueFinalPicture.at<float>(i, j);
@@ -174,6 +213,9 @@ int main(int argc, char** argv){
 
 	cout << endl << "Program over" << endl;
 	*/
+
+	printMinSat();
+	printMaxSat();
 
 	waitKey(0);
 
