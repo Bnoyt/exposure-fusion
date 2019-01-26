@@ -4,3 +4,4 @@ Tom Mertens, Jan Kautz, and Frank Van Reeth. Exposure Fusion. Available at: http
 This figure shows the global structure of the algorithm:
 
 
+![Code structure](Schema.png?raw=true "Code structure")
