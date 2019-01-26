@@ -63,29 +63,21 @@ void Saturation(const Mat& src_color, Mat& S){
 	S = Mat(m, n, CV_32F);
 	for(int i=0;i<m;i++){
 		for(int j=0;j<n;j++){
-			S.at<float>(i, j) = (float)I.at<Vec3b>(i, j)[1] + 0.1;
+			S.at<float>(i, j) = (float)I.at<Vec3b>(i, j)[1] + 0.01;
 		}
 	}
 }
 
 // Well-exposedness
-void WellExposedness(const Mat&src_gray, Mat& E){
-	float sigma = 0.2;
+void WellExposedness(const Mat&src_gray, Mat& E) {
+	float sigma = 0.08;
 	int m = src_gray.rows, n = src_gray.cols;
 	E = Mat(m, n, CV_32F);
-	for(int i = 0;i < m; i++){
-		for(int j=0;j<n;j++){
-			E.at<float>(i,j) = exp(-((float)src_gray.at<char>(i,j)/255. - 0.5)*((float)src_gray.at<char>(i,j)/255. - 0.5)/(2*sigma*sigma));
+	for (int i = 0;i < m; i++) {
+		for (int j = 0;j < n;j++) {
+			E.at<float>(i, j) = exp(-((float)src_gray.at<char>(i, j) / 255. - 0.5)*((float)src_gray.at<char>(i, j) / 255. - 0.5) / (2 * sigma*sigma));
 		}
 	}
-
-}
-void printMinSat() {
-	cout << minSat << endl;
-}
-
-void printMaxSat() {
-	cout << maxSat << endl;
 }
 
 const double alphaS = 1.;
@@ -104,7 +96,6 @@ void compute_Weigth_Mat(Mat& src_color, Mat &W) {
 	for (int i = 0;i < m; i++) {
 		for (int j = 0;j < n;j++) {
 			W.at<float>(i, j) = L.at<float>(i,j) * S.at<float>(i,j) * E.at<float>(i,j);
-			//W.at<float>(i, j) = S.at<float>(i, j) * E.at<float>(i, j);
 		}
 	}
 }

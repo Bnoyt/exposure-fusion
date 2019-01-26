@@ -19,6 +19,11 @@ int main(int argc, char** argv) {
 	images.push_back(src_color_1);
 	images.push_back(src_color_2);
 	images.push_back(src_color_3);
+
+	Ptr<AlignMTB> alignMTB = createAlignMTB();
+	alignMTB->process(images, images);
+
+
 	Mat exposureFusion;
 	Ptr<MergeMertens> mergeMertens = createMergeMertens();
 	mergeMertens->process(images, exposureFusion);

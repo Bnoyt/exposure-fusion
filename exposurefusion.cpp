@@ -14,7 +14,8 @@ using namespace std;
 
 int main(int argc, char** argv){
 
-	const int NUMBER_OF_PICTURES = 16;
+	const int NUMBER_OF_PICTURES = 3;
+	//const int NUMBER_OF_PICTURES = 3;
 
 	vector<Mat> src_color;
 	vector<Mat> src_B;
@@ -24,7 +25,7 @@ int main(int argc, char** argv){
 
 	
 	cout << "Loading the pictures..." << endl;
-	
+	/*
 	src_color.push_back(imread("../memorial0061.jpg"));
 	src_color.push_back(imread("../memorial0062.jpg"));
 	src_color.push_back(imread("../memorial0063.jpg"));
@@ -41,15 +42,15 @@ int main(int argc, char** argv){
 	src_color.push_back(imread("../memorial0074.jpg"));
 	src_color.push_back(imread("../memorial0075.jpg"));
 	src_color.push_back(imread("../memorial0076.jpg"));
-	/*
+	*/
 	src_color.push_back(imread("../image1.jpg"));
 	src_color.push_back(imread("../image2.jpg"));
 	src_color.push_back(imread("../image3.jpg"));
-	*/
+	
 	cout << "Done." << endl;
 
 
-	Mat weight;
+	Mat weight, finalNaive;
 
 	cout << "Computing src_B, src_G, src_R..." << endl;
 	
@@ -161,31 +162,12 @@ int main(int argc, char** argv){
 
 	cout << "Done." << endl;
 
-	cout << blueFinalLaplacianPyramid[blueFinalLaplacianPyramid.size() - 1].rows << " " << blueFinalLaplacianPyramid[blueFinalLaplacianPyramid.size() - 1].cols << endl;
-	cout << blueFinalLaplacianPyramid[blueFinalLaplacianPyramid.size() - 2].rows << " " << blueFinalLaplacianPyramid[blueFinalLaplacianPyramid.size() - 2].cols << endl;
-
-	cout << endl << "Blue" << endl;
-
-	cout << blueFinalLaplacianPyramid[blueFinalLaplacianPyramid.size() - 1].at<float>(0, 0) << " " << blueFinalLaplacianPyramid[blueFinalLaplacianPyramid.size() - 1].at<float>(0, 1) << endl;
-	cout << blueFinalLaplacianPyramid[blueFinalLaplacianPyramid.size() - 1].at<float>(1, 0) << " " << blueFinalLaplacianPyramid[blueFinalLaplacianPyramid.size() - 1].at<float>(1, 1) << endl;
-
-	cout << endl << "Green" << endl;
-	cout << greenFinalLaplacianPyramid[greenFinalLaplacianPyramid.size() - 1].at<float>(0, 0) << " " << greenFinalLaplacianPyramid[greenFinalLaplacianPyramid.size() - 1].at<float>(0, 1) << endl;
-	cout << greenFinalLaplacianPyramid[greenFinalLaplacianPyramid.size() - 1].at<float>(1, 0) << " " << greenFinalLaplacianPyramid[greenFinalLaplacianPyramid.size() - 1].at<float>(1, 1) << endl;
-
 	
 	Mat blueFinalPicture, greenFinalPicture, redFinalPicture;
 	reconstructPictureWithLaplacianPyramid(blueFinalLaplacianPyramid, blueFinalPicture);
 	reconstructPictureWithLaplacianPyramid(greenFinalLaplacianPyramid, greenFinalPicture);
 	reconstructPictureWithLaplacianPyramid(redFinalLaplacianPyramid, redFinalPicture);
 
-	/*
-	cout << endl;
-	cout << "Blue " << blueFinalPicture.rows << " " << blueFinalPicture.cols << endl;
-	cout << "Green " << greenFinalPicture.rows << " " << greenFinalPicture.cols << endl;
-	cout << "Red " << redFinalPicture.rows << " " << redFinalPicture.cols << endl;
-	cout << "Picture " << src_color_1.rows << " " << src_color_1.cols << endl;
-	*/
 	
 	Mat finalPicture = src_color[0];
 	for (int i = 0; i < m; i++) {
@@ -198,24 +180,13 @@ int main(int argc, char** argv){
 
 	imshow("Final Picture", finalPicture);
 	imwrite("FinalPicture.png", finalPicture);
+
+	Mat finalNaive = Mat(src_color[0].rows, src_color[0].cols, CV_32F);
+
 	
 	
 
 
-	/*
-	cout << endl << "Color intensities in (100, 20):" << endl;
-	cout << "Blue: " << blueFinalPicture.at<float>(100, 20) << endl;
-	cout << "Green: " << greenFinalPicture.at<float>(100, 20) << endl;
-	cout << "Red: " << redFinalPicture.at<float>(100, 20) << endl;
-	
-	cout << endl << (int)src_color_3.at<Vec3b>(100, 20)[0] << " " << src_color_3.at<Vec3b>(100, 20) << endl;
-
-
-	cout << endl << "Program over" << endl;
-	*/
-
-	printMinSat();
-	printMaxSat();
 
 	waitKey(0);
 

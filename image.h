@@ -60,5 +60,3 @@ void Laplacian(const Mat&src_gray, Mat& dest);
 void Saturation(const Mat& src_color, Mat& S);
 void WellExposedness(const Mat&src_gray_CV_32F, Mat& E);
 void compute_Weigth_Mat(Mat& src_color, Mat &W);
-void printMinSat();
-void printMaxSat();
